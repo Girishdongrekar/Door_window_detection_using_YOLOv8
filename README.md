@@ -41,6 +41,8 @@ It returns:
 
 Public API URL.txt - contains the link where the model is deployes and allowing anyone to test detection directly in the browser
 
+       https://huggingface.co/spaces/girishdongrekar/Door_window_detection
+
 🌐 Deployment:
 
     The solution is deployed on Hugging Face Spaces, allowing anyone to test detection directly in the browser.
