@@ -4,12 +4,12 @@ import json
 import numpy as np
 
 # Load YOLOv8 model
-model = YOLO("best.pt")  # Replace with your model path or model name if on HF Hub
+model = YOLO("best.pt")  # Replace with your actual path or HF model name
 
 def detect_objects(image):
     results = model(image)
     result = results[0]
-    
+
     # Annotated image
     annotated_image = result.plot()
 
@@ -29,16 +29,31 @@ def detect_objects(image):
 
     return annotated_image, detection_json
 
-# Gradio UI
-interface = gr.Interface(
-    fn=detect_objects,
-    inputs=gr.Image(type="pil", label="Upload Image"),
-    outputs=[
-        gr.Image(type="numpy", label="Detected Image"),
-        gr.Textbox(label="Detection JSON")
-    ],
-    title="YOLOv8 Object Detection",
-    description="Upload an image to detect objects. The output includes an annotated image and JSON with class_id, class_label, and bounding_box."
-)
+# Gradio Instagram-style UI
+with gr.Blocks(theme=gr.themes.Soft(), title="YOLOv8 Object Detector") as demo:
+    gr.Markdown("""
+    <div style="text-align: center;">
+        <h1 style="font-size: 2.5rem; font-family: 'Arial', sans-serif;">📷 YOLOv8 Vision</h1>
+        <p style="font-size: 1.1rem;">Upload a photo and let the AI tag the scene like magic ✨</p>
+    </div>
+    """)
 
-interface.launch()
+    with gr.Row(equal_height=True):
+        with gr.Column(scale=1):
+            input_image = gr.Image(type="pil", label="📤 Upload Your Snap", image_mode="RGB")
+            submit_btn = gr.Button("✨ Detect Objects", variant="primary")
+        
+        with gr.Column(scale=1):
+            output_image = gr.Image(type="numpy", label="📍 Tagged Image", image_mode="RGB", show_label=True)
+            output_json = gr.Textbox(label="🧾 Detection Details (JSON)", lines=12, show_copy_button=True)
+
+    submit_btn.click(fn=detect_objects, inputs=input_image, outputs=[output_image, output_json])
+
+    gr.Markdown("""
+    <div style="text-align: center; font-size: 0.9rem; color: gray; margin-top: 20px;">
+        💡 Tip: Upload selfies, pets, or scenery—YOLOv8 will label them!<br/>
+        🚀 Built with YOLOv8 & Gradio for an Insta-friendly AI vibe.
+    </div>
+    """)
+
+demo.launch()
